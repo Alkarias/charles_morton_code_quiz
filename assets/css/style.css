@@ -1,0 +1,96 @@
+body {
+    margin: 0;
+    position: relative;
+    height: 100vh;
+}
+
+#highscores {
+    margin: 1rem;
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+#highscores:hover {
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+#time {
+    margin: 1rem;
+    position: absolute;
+    top: 0;
+    right: 0;
+    text-align: left;
+}
+
+section {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 45%;
+    padding: 1.5rem;
+    background-color: #aaaaaa;
+    border-radius: 3%;
+    box-shadow: 0.3625rem 0.25rem 0.125rem #888888;
+}
+
+h1 {
+    text-align: center;
+}
+
+p {
+    text-align: center;
+}
+
+#answers {
+    display: grid;
+    grid-template: auto / auto auto;
+}
+
+button {
+    margin: 0.1125rem;
+    color: white;
+    background-color: #764faf;
+    border-color: #764faf;
+    padding: 0.5rem;
+}
+
+.center {
+    position: relative;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+button:hover {
+    background-color: #5c3e89;
+    cursor: pointer;
+}
+
+#startBtn {
+    position: relative;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+#submit {
+    margin: 0.1125rem;
+    color: white;
+    background-color: #764faf;
+    border-color: #764faf;
+    padding: 0.5rem;
+}
+
+#submit:hover {
+    background-color: #5c3e89;
+    cursor: pointer;
+}
+
+li {
+    background-color: #989898;
+}
+
+li:nth-child(even) {
+    background-color: #bebebe;
+}
