@@ -1,49 +1,30 @@
-//grabbing all of the elements of the start screen
-var containerEl = document.querySelector('#container'); 
-var h1El = document.getElementById('header');
-var description = document.getElementById('description');
-var btnStart = document.getElementById('startBtn');
-
-//this is the setup for the questions screen
-var ansForm = document.createElement("form");
-ansForm.setAttribute('id', 'answers');  
-var btn1 = document.createElement("button");
-var btn2 = document.createElement("button");
-var btn3 = document.createElement("button");
-var btn4 = document.createElement("button");
-//this is the setup for the finished screen
-
-//this is the setup for the scoreboard
-
 //clones the question list so that the original is unaltered by .splice()
-var listClone = questionList.questions;
+var listClone = [];
 
 //variable used to store the score from the current attempt
 var score = 0;
-var timeRemaining = 60;
+var timeRemaining = 60; //original time was 60 seconds
 
 //when the start button is pressed, change the display to show
 //the multiple choice questions
 btnStart.addEventListener('click', function() {
-    //unrenders the unnecessary objects from the start screen
-    description.setAttribute('style', 'display:none');
-    btnStart.setAttribute('style', 'display:none');
-    //picks the question that is displayed
+    listClone = questionList.questions;
+    containerEl.removeChild(description);
+    containerEl.removeChild(btnStart);
     nextQuestion();
-    //appends the needed elements into the display
-    containerEl.appendChild(ansForm);
-    ansForm.appendChild(btn1);
-    ansForm.appendChild(btn2);
-    ansForm.appendChild(btn3);
-    ansForm.appendChild(btn4);
-    //starts the time clock
-    startTimer(); 
+    quizScreen(); //switches the display to show question and answers
+    startTimer();  //starts the time clock
 });
 
 btn1.addEventListener('click', buttonClick);
 btn2.addEventListener('click', buttonClick);
 btn3.addEventListener('click', buttonClick);
 btn4.addEventListener('click', buttonClick);
+
+iptSubmit.addEventListener('click', function(event) {
+    event.preventDefault();
+    var highscores = JSON.parse(localStorage.getItem(highscores));
+});
 
 function buttonClick(event) {
     event.preventDefault(); //stops the form from resetting
@@ -52,6 +33,8 @@ function buttonClick(event) {
 }
 
 function nextQuestion() {
+    //if all of the questions have been answered, end the quiz
+    if (listClone.length === 0) scoreScreen();
     //chooses a random question from the cloned question list
     // var questionIndex = Math.floor(Math.random() * listClone.length);
     var questionIndex = 0;
@@ -93,14 +76,14 @@ function btnReset(index) {
     btn3.setAttribute('data-bool', 'false');
     btn4.setAttribute('data-bool', 'false');
 
+    //communicates to the button that it is holding the correct answer
+    window["btn" + (index+1)].setAttribute('data-bool', 'true');
+
     //this is temporary for matching correct answer to the data attribute
     btn1.setAttribute('style', 'background-color:#764faf');
     btn2.setAttribute('style', 'background-color:#764faf');
     btn3.setAttribute('style', 'background-color:#764faf');
     btn4.setAttribute('style', 'background-color:#764faf');
-
-    //communicates to the button that it is holding the correct answer
-    window["btn" + (index+1)].setAttribute('data-bool', 'true');
     window["btn" + (index+1)].setAttribute('style', 'background-color:green');
 }
 
@@ -116,19 +99,40 @@ function checkCorrect(target) {
 }
 
 function startTimer() {
+    timeEl.textContent = "Time Remaining: " + timeRemaining;
+
     var timerInterval = setInterval(function() { //starts a loops that iterates every 1000ms
-        timeEl.textcontent = "Time Remaining " + timeRemaining;//updates the time display
-        timeRemaining--; //decrements the time variable
+        timeRemaining--;//decrements the time variable
+        timeEl.textContent = "Time Remaining: " + timeRemaining;//updates the time display
+         
         if (timeRemaining === 0) {
             clearInterval(timerInterval); //stop the loop
             timeRemaining = 60; // resets the clock
-            timeEl.textcontent = ""; //hides the time display
-            gameOver(); //displays the score recording screen
+            timeEl.textContent = ""; //hides the time display
+            scoreScreen(); //displays the score recording screen
         }
     }, 1000);
 }
 
-function gameOver() {
-
+function quizScreen() {
+    containerEl.appendChild(ansForm);
+    ansForm.appendChild(btn1);
+    ansForm.appendChild(btn2);
+    ansForm.appendChild(btn3);
+    ansForm.appendChild(btn4);
 }
 
+function scoreScreen() {
+    containerEl.removeChild(ansForm);
+    containerEl.appendChild(finalScore);
+    containerEl.appendChild(scoreForm);
+    scoreForm.appendChild(lblEl);
+    scoreForm.appendChild(iptName);
+    scoreForm.appendChild(iptSubmit);
+    h1El.textContent = "You're Finished!";
+    finalScore.textContent = "Your final score is: " + score;
+}
+
+function highscoreScreen() {
+
+}
