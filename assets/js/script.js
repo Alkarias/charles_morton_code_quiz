@@ -11,12 +11,16 @@ var btn1 = document.createElement("button");
 var btn2 = document.createElement("button");
 var btn3 = document.createElement("button");
 var btn4 = document.createElement("button");
+//this is the setup for the finished screen
+
+//this is the setup for the scoreboard
 
 //clones the question list so that the original is unaltered by .splice()
 var listClone = questionList.questions;
 
 //variable used to store the score from the current attempt
 var score = 0;
+var timeRemaining = 60;
 
 //when the start button is pressed, change the display to show
 //the multiple choice questions
@@ -32,6 +36,8 @@ btnStart.addEventListener('click', function() {
     ansForm.appendChild(btn2);
     ansForm.appendChild(btn3);
     ansForm.appendChild(btn4);
+    //starts the time clock
+    startTimer(); 
 });
 
 btn1.addEventListener('click', buttonClick);
@@ -40,23 +46,24 @@ btn3.addEventListener('click', buttonClick);
 btn4.addEventListener('click', buttonClick);
 
 function buttonClick(event) {
-    event.preventDefault();
-    checkCorrect(event.target);
-    nextQuestion();
+    event.preventDefault(); //stops the form from resetting
+    checkCorrect(event.target); //checks if the user clicked the correct answer
+    nextQuestion(); // displays the next question
 }
 
 function nextQuestion() {
     //chooses a random question from the cloned question list
     // var questionIndex = Math.floor(Math.random() * listClone.length);
     var questionIndex = 0;
+    //assigns the chosen question to a variable for easy reference
+    var questionNum = listClone[questionIndex];
     //removes the chosen question from the list so it cannot be picked again
-    //and allows reference to the chosen question
-    var questionNum = listClone.splice(questionIndex,1); //returns an array with a length of 1
+    listClone.splice(questionIndex,1); //returns an array with a length of 1
     //applies the answers to a random button
-    var answers = shuffle(questionNum[0]);
+    var answers = shuffle(questionNum);
 
     //updates the text to display the new question
-    h1El.textContent = questionNum[0].question;
+    h1El.textContent = questionNum.question;
     btn1.textContent = answers[0];
     btn2.textContent = answers[1];
     btn3.textContent = answers[2];
@@ -68,12 +75,12 @@ function shuffle(item) { //shuffles the answers so they are placed onto random b
     var answers = [];
     var answerSet = false;
     for (var i = 0; i < 4; i++) {
-        var index = Math.floor(Math.random() * answersTemp.length);
-        answers.push(answersTemp[index]);
-        answersTemp.splice(index, 1);
+        var index = Math.floor(Math.random() * answersTemp.length); //
+        answers.push(answersTemp[index]); 
+        answersTemp.splice(index, 1); //removes the question from the pool of questions
         if (index == 0 && !answerSet) { //tells which button is holding the correct answer
             btnReset(i);
-            answerSet = true;
+            answerSet = true; // ensures that this can only occur once per question
         }
     }
     return answers;
@@ -98,11 +105,30 @@ function btnReset(index) {
 }
 
 function checkCorrect(target) {
+    // if the user clicks the correct answer, they get score added
+    // if they click the wrong button, they lose time.
     if (target.getAttribute('data-bool') == 'true') {
         score++;
     } else {
-        // time -= 5;
+        timeRemaining -= 5;
     }
     console.log(score);
+}
+
+function startTimer() {
+    var timerInterval = setInterval(function() { //starts a loops that iterates every 1000ms
+        timeEl.textcontent = "Time Remaining " + timeRemaining;//updates the time display
+        timeRemaining--; //decrements the time variable
+        if (timeRemaining === 0) {
+            clearInterval(timerInterval); //stop the loop
+            timeRemaining = 60; // resets the clock
+            timeEl.textcontent = ""; //hides the time display
+            gameOver(); //displays the score recording screen
+        }
+    }, 1000);
+}
+
+function gameOver() {
+
 }
 
