@@ -11,14 +11,15 @@
 
 <body>
   <span id="highscores">View Highscores</span>  
-  <span id="time">Time: </span>
+  <span id="time"></span>
 
   <section id="container">
     <h1 id="header">Javascript Code Quiz</h1>
     <p id="description">This is a short description and instruction of the quiz</p>
-    <button id="startBtn" >Click to Begin</button>
+    <button id="startBtn" class="center" >Click to Begin</button>
   </section>
-    <script type = "text/Javascript" src="./assets/js/questionList.js"></script>
+    <script src="./assets/js/questionList.js"></script>
+    <script src ="./assets/js/elements.js"></script> 
     <script src="./assets/js/script.js"></script>
 </body>
 </html>
@@ -42,7 +43,7 @@
 <!-- This is the place where you save your score -->
 <!-- <h1>You did it!</h1>
 <p>your final score is</p>
-<form id="submission" class="center">
+<form class="center">
   <label for="userName">enter your name:</label>
   <input id="userName"></input>
   <input id="submit" type="submit"></input>
