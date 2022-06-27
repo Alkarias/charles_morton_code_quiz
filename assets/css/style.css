@@ -58,6 +58,7 @@ button {
 }
 
 .center {
+    text-align: center;
     position: relative;
     left: 50%;
     transform: translateX(-50%);
@@ -66,12 +67,6 @@ button {
 button:hover {
     background-color: #5c3e89;
     cursor: pointer;
-}
-
-#startBtn {
-    position: relative;
-    left: 50%;
-    transform: translateX(-50%);
 }
 
 #submit {
