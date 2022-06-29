@@ -3,7 +3,9 @@ var listClone = [];
 
 //variable used to store the score from the current attempt
 var score = 0;
-var timeRemaining = 60; //original time was 60 seconds
+
+var timerInterval; //variable that holds the timer object
+var timeRemaining = 1; //original time was 60 seconds
 
 //when the start button is pressed, change the display to show
 //the multiple choice questions
@@ -12,7 +14,7 @@ btnStart.addEventListener('click', function() {
     containerEl.removeChild(description);
     containerEl.removeChild(btnStart);
     nextQuestion();
-    quizScreen(); //switches the display to show question and answers
+    renderQuizScreen(); //switches the display to show question and answers
     startTimer();  //starts the time clock
 });
 
@@ -23,7 +25,18 @@ btn4.addEventListener('click', buttonClick);
 
 iptSubmit.addEventListener('click', function(event) {
     event.preventDefault();
-    var highscores = JSON.parse(localStorage.getItem(highscores));
+    // var highscores = JSON.parse(localStorage.getItem(highscores));
+    // renderHighscoreScreen();
+
+    if (iptName.value === '') {
+        alert('Enter your name!');
+    } else {
+        renderHighscoreScreen();
+    }
+});
+
+clearBtn.addEventListener('click', function(event) {
+    localStorage.clear();
 });
 
 function buttonClick(event) {
@@ -34,10 +47,13 @@ function buttonClick(event) {
 
 function nextQuestion() {
     //if all of the questions have been answered, end the quiz
-    if (listClone.length === 0) scoreScreen();
+    if (listClone.length === 0) { 
+        renderScoreScreen();
+        return;
+    }
     //chooses a random question from the cloned question list
-    // var questionIndex = Math.floor(Math.random() * listClone.length);
-    var questionIndex = 0;
+    var questionIndex = Math.floor(Math.random() * listClone.length);
+    // var questionIndex = 0;
     //assigns the chosen question to a variable for easy reference
     var questionNum = listClone[questionIndex];
     //removes the chosen question from the list so it cannot be picked again
@@ -94,27 +110,33 @@ function checkCorrect(target) {
         score++;
     } else {
         timeRemaining -= 5;
+        timeEl.textContent = "Time Remaining: " + timeRemaining;
     }
-    console.log(score);
+    // console.log(score);
 }
 
 function startTimer() {
     timeEl.textContent = "Time Remaining: " + timeRemaining;
 
-    var timerInterval = setInterval(function() { //starts a loops that iterates every 1000ms
+    timerInterval = setInterval(function() { //starts a loops that iterates every 1000ms
         timeRemaining--;//decrements the time variable
         timeEl.textContent = "Time Remaining: " + timeRemaining;//updates the time display
          
-        if (timeRemaining === 0) {
+        if (timeRemaining <= 0) {
             clearInterval(timerInterval); //stop the loop
             timeRemaining = 60; // resets the clock
             timeEl.textContent = ""; //hides the time display
-            scoreScreen(); //displays the score recording screen
+
+            //displays the score recording screen and handles
+            // ending the timer
+            renderScoreScreen(); 
         }
     }, 1000);
+
+
 }
 
-function quizScreen() {
+function renderQuizScreen() {
     containerEl.appendChild(ansForm);
     ansForm.appendChild(btn1);
     ansForm.appendChild(btn2);
@@ -122,7 +144,11 @@ function quizScreen() {
     ansForm.appendChild(btn4);
 }
 
-function scoreScreen() {
+function renderScoreScreen() {
+    clearInterval(timerInterval); // stops the timer
+    timeRemaining = 60; // resets the clock
+    timeEl.textContent = ""; //hides the time display
+    //remove and append elements to show the new screen
     containerEl.removeChild(ansForm);
     containerEl.appendChild(finalScore);
     containerEl.appendChild(scoreForm);
@@ -130,9 +156,113 @@ function scoreScreen() {
     scoreForm.appendChild(iptName);
     scoreForm.appendChild(iptSubmit);
     h1El.textContent = "You're Finished!";
-    finalScore.textContent = "Your final score is: " + score;
+    //display the player's score
+    finalScore.textContent = "Your final score is: " + score + "/25";
 }
 
-function highscoreScreen() {
+function renderHighscoreScreen() {
+    h1El.textContent = "Highscores";
+    containerEl.removeChild(finalScore);
+    containerEl.removeChild(scoreForm);
+    containerEl.appendChild(scoreList);
+    containerEl.appendChild(highscoreForm);
+    highscoreForm.appendChild(backBtn);
+    highscoreForm.appendChild(clearBtn);
 
+    getScores();
+}
+
+function getScores() {
+    /*
+    get highscores from local storage
+    add current score into array at appropriate position
+    remove last element of array if length > 10
+    create li element for each object in the array
+    */
+    var highscores = JSON.parse(localStorage.getItem('highscores'));
+    var attempt = {
+        player:iptName.value,
+        score:score
+    }
+    /*
+    var highscores = [
+        { //1
+            player:'a',
+            score:15
+        },
+        { //2
+            player:'b',
+            score:25
+        },
+        { //3
+            player:'c',
+            score:16
+        },
+        { //4
+            player:'d',
+            score:10
+        },
+        { //5
+            player:'e',
+            score:13
+        },
+        { //6
+            player:'f',
+            score:8
+        },
+        { //7
+            player:'g',
+            score:6
+        },
+        { //8
+            player:'h',
+            score:8
+        },
+        { //9
+            player:'i',
+            score:10
+        },
+        { //10
+            player:'j',
+            score:0
+        }
+    ]
+    */
+   
+    //if the local storage is empty, populate it
+    //otherwise, add the new score to the end of the array
+    if (highscores === null) {
+        highscores = [attempt];
+    } else {
+        highscores.push(attempt);
+    }
+    
+    //sort the array in order of score from largest to smallest
+    highscores.sort(compare);
+    // if the highscore is too long, remove excess
+    if (highscores.length > 10) highscores.pop(); 
+
+    for (var i = 0; i < highscores.length; i++) {
+        var liEl = document.createElement('li');
+        liEl.textContent = highscores[i].player + " : " + highscores[i].score;
+        liEl.setAttribute('class', 'center');
+        scoreList.appendChild(liEl);
+    }
+
+    localStorage.setItem('highscores', JSON.stringify(highscores));
+    console.log(highscores);
+
+}
+
+function compare(a, b) {
+    const scoreA = a.score;
+    const scoreB = b.score;
+    
+    var comparison = 0;
+    if (scoreA < scoreB) {
+        comparison = 1;
+    } else if (scoreA > scoreB) {
+        comparison = -1
+    }
+    return comparison;
 }
