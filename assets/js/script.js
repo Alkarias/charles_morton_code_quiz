@@ -5,7 +5,7 @@ var listClone = [];
 var score = 0;
 
 var timerInterval; //variable that holds the timer object
-var timeRemaining = 1; //original time was 60 seconds
+var timeRemaining = 60; //variable that holds the time remaining
 
 //when the start button is pressed, change the display to show
 //the multiple choice questions
@@ -18,27 +18,41 @@ btnStart.addEventListener('click', function() {
     startTimer();  //starts the time clock
 });
 
+//event listeners for the four answer buttons
 btn1.addEventListener('click', buttonClick);
 btn2.addEventListener('click', buttonClick);
 btn3.addEventListener('click', buttonClick);
 btn4.addEventListener('click', buttonClick);
 
+//event listener for the score submit button
 iptSubmit.addEventListener('click', function(event) {
     event.preventDefault();
     if (iptName.value === '') { // makes sure that a name has been entered, then sends the score to the scoreboard
         alert('Enter your name!');
     } else {
+        containerEl.removeChild(finalScore);
+        containerEl.removeChild(scoreForm);
         renderHighscoreScreen();
+        setScores();
     }
-    setScores();
 });
 
+//event listener for the clear highscore button
 clearBtn.addEventListener('click', function(event) {
     event.preventDefault();
     localStorage.clear();
     containerEl.removeChild(scoreList);
 });
 
+//event listener for the View Highscores span in the top right
+hsEl.addEventListener('click', function() {
+    hsEl.setAttribute('style', 'display:none');
+    containerEl.removeChild(description);
+    containerEl.removeChild(btnStart);
+    renderHighscoreScreen();
+    var highscores = JSON.parse(localStorage.getItem('highscores'));
+    updateScoreBoard(highscores);
+});
 
 function buttonClick(event) {
     event.preventDefault(); //stops the form from resetting
@@ -96,12 +110,13 @@ function btnReset(index) {
     //communicates to the button that it is holding the correct answer
     window["btn" + (index+1)].setAttribute('data-bool', 'true');
 
-    //this is temporary for matching correct answer to the data attribute
-    btn1.setAttribute('style', 'background-color:#764faf');
-    btn2.setAttribute('style', 'background-color:#764faf');
-    btn3.setAttribute('style', 'background-color:#764faf');
-    btn4.setAttribute('style', 'background-color:#764faf');
-    window["btn" + (index+1)].setAttribute('style', 'background-color:green');
+    // code used for troubleshooting and ensuring the matching of the correct answer and data-bool attribute
+    // as well as enabling the quick clicking through the quiz to test functionality
+    // btn1.setAttribute('style', 'background-color:#764faf');
+    // btn2.setAttribute('style', 'background-color:#764faf');
+    // btn3.setAttribute('style', 'background-color:#764faf');
+    // btn4.setAttribute('style', 'background-color:#764faf');
+    // window["btn" + (index+1)].setAttribute('style', 'background-color:green');
 }
 
 function checkCorrect(target) {
@@ -138,6 +153,7 @@ function startTimer() {
 }
 
 function renderQuizScreen() {
+    hsEl.setAttribute('style', 'display:none');
     containerEl.appendChild(ansForm);
     ansForm.appendChild(btn1);
     ansForm.appendChild(btn2);
@@ -163,8 +179,6 @@ function renderScoreScreen() {
 
 function renderHighscoreScreen() {
     h1El.textContent = "Highscores";
-    containerEl.removeChild(finalScore);
-    containerEl.removeChild(scoreForm);
     containerEl.appendChild(scoreList);
     containerEl.appendChild(highscoreForm);
     highscoreForm.appendChild(backBtn);
@@ -172,13 +186,9 @@ function renderHighscoreScreen() {
 }
 
 function setScores() {
-    /*
-    get highscores from local storage
-    add current score into array at appropriate position
-    remove last element of array if length > 10
-    create li element for each object in the array
-    */
+    //grabs the list of saved highscores
     var highscores = JSON.parse(localStorage.getItem('highscores'));
+    //makes an object that contains the current attempt
     var attempt = {
         player:iptName.value,
         score:score
@@ -193,13 +203,15 @@ function setScores() {
     //sort the array in order of score from largest to smallest
     highscores.sort(compare);
     // if the highscore is too long, remove excess
-    if (highscores.length > 10) highscores.pop(); 
-    updateScoreBoard(highscores); //function that loads the list of scoreboard elements
+    if (highscores.length > 10) highscores.pop();  
+    //function that loads the list of scoreboard elements
+    updateScoreBoard(highscores);
     //stores the list of highscores for later use
     localStorage.setItem('highscores', JSON.stringify(highscores));
 }
 
 function updateScoreBoard(highscores) {
+    //adds each index of the highscore array and assigns it to a list item, which it appends to the scoreboard
     for (var i = 0; i < highscores.length; i++) {
         var liEl = document.createElement('li');
         liEl.textContent = highscores[i].player + " : " + highscores[i].score;
@@ -209,6 +221,7 @@ function updateScoreBoard(highscores) {
 }
 
 function compare(a, b) {
+    //simple logic to sort the values in the highscores array by their score
     const scoreA = a.score;
     const scoreB = b.score;
     
