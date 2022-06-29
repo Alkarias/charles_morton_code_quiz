@@ -6,7 +6,7 @@ var btnStart = document.getElementById('startBtn');
 var timeEl = document.getElementById('time');
 
 
-//this is the setup for the questions screen
+//making the elemets for the quiz screen
 var ansForm = document.createElement("form");
 ansForm.setAttribute('id', 'answers');  
 var btn1 = document.createElement("button");
@@ -14,7 +14,7 @@ var btn2 = document.createElement("button");
 var btn3 = document.createElement("button");
 var btn4 = document.createElement("button");
 
-//this is the setup for the finished screen
+//making the elements for the score screen
 var scoreForm = document.createElement("form");
 scoreForm.setAttribute('class', 'center');
 var finalScore = document.createElement("p");
@@ -27,5 +27,11 @@ var iptSubmit = document.createElement("input");
 iptSubmit.setAttribute('id', 'submit');
 iptSubmit.setAttribute('type', 'submit');
 
-//this is the setup for the scoreboard
-
+//making the elements for the highscore board
+var scoreList = document.createElement('ol');
+var highscoreForm = document.createElement('form');
+highscoreForm.setAttribute('class', 'center');
+var backBtn = document.createElement('button');
+backBtn.textContent = "Go Back";
+var clearBtn = document.createElement('button');
+clearBtn.textContent = "Clear Highscores";
