@@ -25,19 +25,20 @@ btn4.addEventListener('click', buttonClick);
 
 iptSubmit.addEventListener('click', function(event) {
     event.preventDefault();
-    // var highscores = JSON.parse(localStorage.getItem(highscores));
-    // renderHighscoreScreen();
-
-    if (iptName.value === '') {
+    if (iptName.value === '') { // makes sure that a name has been entered, then sends the score to the scoreboard
         alert('Enter your name!');
     } else {
         renderHighscoreScreen();
     }
+    setScores();
 });
 
 clearBtn.addEventListener('click', function(event) {
+    event.preventDefault();
     localStorage.clear();
+    containerEl.removeChild(scoreList);
 });
+
 
 function buttonClick(event) {
     event.preventDefault(); //stops the form from resetting
@@ -168,11 +169,9 @@ function renderHighscoreScreen() {
     containerEl.appendChild(highscoreForm);
     highscoreForm.appendChild(backBtn);
     highscoreForm.appendChild(clearBtn);
-
-    getScores();
 }
 
-function getScores() {
+function setScores() {
     /*
     get highscores from local storage
     add current score into array at appropriate position
@@ -184,51 +183,6 @@ function getScores() {
         player:iptName.value,
         score:score
     }
-    /*
-    var highscores = [
-        { //1
-            player:'a',
-            score:15
-        },
-        { //2
-            player:'b',
-            score:25
-        },
-        { //3
-            player:'c',
-            score:16
-        },
-        { //4
-            player:'d',
-            score:10
-        },
-        { //5
-            player:'e',
-            score:13
-        },
-        { //6
-            player:'f',
-            score:8
-        },
-        { //7
-            player:'g',
-            score:6
-        },
-        { //8
-            player:'h',
-            score:8
-        },
-        { //9
-            player:'i',
-            score:10
-        },
-        { //10
-            player:'j',
-            score:0
-        }
-    ]
-    */
-   
     //if the local storage is empty, populate it
     //otherwise, add the new score to the end of the array
     if (highscores === null) {
@@ -236,22 +190,22 @@ function getScores() {
     } else {
         highscores.push(attempt);
     }
-    
     //sort the array in order of score from largest to smallest
     highscores.sort(compare);
     // if the highscore is too long, remove excess
     if (highscores.length > 10) highscores.pop(); 
+    updateScoreBoard(highscores); //function that loads the list of scoreboard elements
+    //stores the list of highscores for later use
+    localStorage.setItem('highscores', JSON.stringify(highscores));
+}
 
+function updateScoreBoard(highscores) {
     for (var i = 0; i < highscores.length; i++) {
         var liEl = document.createElement('li');
         liEl.textContent = highscores[i].player + " : " + highscores[i].score;
         liEl.setAttribute('class', 'center');
         scoreList.appendChild(liEl);
     }
-
-    localStorage.setItem('highscores', JSON.stringify(highscores));
-    console.log(highscores);
-
 }
 
 function compare(a, b) {
@@ -266,3 +220,4 @@ function compare(a, b) {
     }
     return comparison;
 }
+

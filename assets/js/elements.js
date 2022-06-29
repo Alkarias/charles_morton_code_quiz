@@ -4,6 +4,7 @@ var h1El = document.getElementById('header');
 var description = document.getElementById('description');
 var btnStart = document.getElementById('startBtn');
 var timeEl = document.getElementById('time');
+var hsEl = document.getElementById('highscores');
 
 
 //making the elemets for the quiz screen
