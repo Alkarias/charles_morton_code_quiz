@@ -234,3 +234,45 @@ function compare(a, b) {
     return comparison;
 }
 
+/*
+var highscores = [
+    {
+        name: 'eevee',
+        score: '25'
+    },
+    {
+        name:'umbreon',
+        score:'15'
+    },
+    {
+        name: 'vaporeon',
+        score: '20'
+    },
+    {
+        name:'jolteon',
+        score:'14'
+    },
+    {
+        name: 'flareon',
+        score: '12'
+    },
+    {
+        name: 'glaceon',
+        score: '7'
+    },
+    {
+        name:'espeon',
+        score:'15'
+    }
+    {
+        name:'leafeon',
+        score:'23'
+    },
+    {
+        name:'sylveon',
+        score:'4'
+    }
+]
+*/
+
+
